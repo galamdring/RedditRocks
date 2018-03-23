@@ -1,4 +1,4 @@
-package com.galamdring.android.redditrocks.Data;
+package com.galamdring.android.redditrocks.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -6,10 +6,9 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by LMCKECHNIE on 3/20/2018.
@@ -58,6 +57,7 @@ public class PostProvider extends ContentProvider {
                 if(rowsInserted>0){
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
+                Log.d("PostProvider.bulkInsert","Inserted "+rowsInserted+" rows.");
                 return rowsInserted;
             default:
                 return super.bulkInsert(uri, values);
@@ -85,6 +85,7 @@ public class PostProvider extends ContentProvider {
 
         }
         cursor.setNotificationUri(getContext().getContentResolver(),uri);
+        Log.d("PostProvider.query","Got cursor with "+cursor.getCount()+" records.");
         return cursor;
     }
 

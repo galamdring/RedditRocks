@@ -1,4 +1,4 @@
-package com.galamdring.android.redditrocks.Data;
+package com.galamdring.android.redditrocks.data;
 
 import android.content.Context;
 import android.os.AsyncTask;

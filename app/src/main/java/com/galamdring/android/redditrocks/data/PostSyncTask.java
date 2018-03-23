@@ -1,8 +1,10 @@
-package com.galamdring.android.redditrocks.Data;
+package com.galamdring.android.redditrocks.data;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,13 +12,10 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Scanner;
 
 
 /**
@@ -26,6 +25,7 @@ import java.util.Scanner;
 public class PostSyncTask {
 
     private static String after;
+    private static String TAG = "PostSyncTask.syncPosts";
 
     synchronized public static void syncPosts(Context context){
         try{
@@ -36,8 +36,9 @@ public class PostSyncTask {
                 if(posts != null && posts.length != 0){
                     ContentResolver postContentResolver = context.getContentResolver();
                     //Delete the old data.
+                    Log.d(TAG, "Deleting old data.");
                     postContentResolver.delete(PostContract.PostEntry.CONTENT_URI,null,null);
-
+                    Log.d(TAG, "Inserting " +posts.length +" posts.");
                     postContentResolver.bulkInsert(PostContract.PostEntry.CONTENT_URI, posts);
                     // TODO : Notify here if we are going to
 
@@ -54,6 +55,7 @@ public class PostSyncTask {
     }
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
+        Log.i("PostSyncTask", "URL: "+url);
         URLConnection urlConnection = url.openConnection();
         BufferedReader buff = null;
         try {
@@ -71,7 +73,7 @@ public class PostSyncTask {
 
     private static URL getUrl(){
         try{
-            return new URL("http://www.reddit.com/r/askreddit/.json");
+            return new URL("https://www.reddit.com/r/askreddit/.json");
         }
         catch(MalformedURLException e){
             e.printStackTrace();
@@ -81,6 +83,9 @@ public class PostSyncTask {
 
     public static ContentValues[] getPostsContentValuesFromJson(Context context, String jsonString)
             throws JSONException {
+        if(jsonString.equals("")){
+            Toast.makeText(context, "Failed to load data from url: "+getUrl().toString(), Toast.LENGTH_LONG).show();
+        }
         JSONObject postJson = new JSONObject(jsonString).getJSONObject("data");
         JSONArray children = postJson.getJSONArray("children");
 
@@ -95,8 +100,20 @@ public class PostSyncTask {
             postValues.put(PostContract.PostEntry.COLUMN_COMMENTS_COUNT, comment_count);
             String title = child.optString("title");
             postValues.put(PostContract.PostEntry.COLUMN_TITLE, title);
+            postValues.put(PostContract.PostEntry.COLUMN_LINK, child.optString("url"));
+            postValues.put(PostContract.PostEntry.COLUMN_POST_TIME,child.optLong("created_utc"));
+            postValues.put(PostContract.PostEntry.COLUMN_SCORE,child.optLong("score"));
+            postValues.put(PostContract.PostEntry.COLUMN_SUBREDDIT,child.optString("subreddit"));
+            postValues.put(PostContract.PostEntry.COLUMN_THUMBNAIL_URL,child.optString("thumbnail"));
+            postValues.put(PostContract.PostEntry.COLUMN_TYPE,child.optString("link_flair_type"));
+
+            boolean nsfw = child.optBoolean("over_18");
+            int over_18 = 0;
+            if(nsfw) over_18 =1;
+            postValues.put(PostContract.PostEntry.COLUMN_OVER_18, over_18);
+            postContentValues[i] = postValues;
         }
-        // TODO: Finish this method
+
         return postContentValues;
     }
 }

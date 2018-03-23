@@ -1,4 +1,4 @@
-package com.galamdring.android.redditrocks.Data;
+package com.galamdring.android.redditrocks.data;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -16,6 +16,7 @@ public class PostContract {
         public static final String TABLE_NAME = "posts";
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_POST).build();
+
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_SUBREDDIT = "subreddit";
         public static final String COLUMN_POST_TIME = "post_time";

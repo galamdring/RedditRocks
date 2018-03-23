@@ -1,9 +1,7 @@
 package com.galamdring.android.redditrocks;
 
-import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,16 +14,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.galamdring.android.redditrocks.Data.PostContract;
-import com.galamdring.android.redditrocks.Data.PostSyncUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.galamdring.android.redditrocks.data.PostContract;
+import com.galamdring.android.redditrocks.data.PostSyncUtils;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, PostAdapter.PostAdapterOnClickHandler {
 
@@ -67,10 +57,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setAdapter(mPostAdapter);
 
         showLoading();
+        PostSyncUtils.intialize(this);
 
         getSupportLoaderManager().initLoader(ID_POST_LOADER, null, this);
 
-        PostSyncUtils.intialize(this);
+
+
 
     }
 
@@ -85,8 +77,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switch(id){
             case ID_POST_LOADER:
                 Uri postQueryUri = PostContract.PostEntry.CONTENT_URI;
-                String sortOrder = PostContract.PostEntry.COLUMN_POST_TIME+ " DESC";
-                String selection = "";
+                Log.d("MainActivity","Getting Posts from URI: "+postQueryUri);
+                String sortOrder = null;
+                String selection = null;
 
                 return new CursorLoader(this,
                         postQueryUri,
@@ -101,10 +94,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d("Loader", "onLoadFinished called.");
         mPostAdapter.swapCursor(data);
         if(mPosition==RecyclerView.NO_POSITION) mPosition=0;
         mRecyclerView.smoothScrollToPosition(mPosition);
         if(data.getCount() != 0) showPostDataView();
+        else Toast.makeText(this, "Data was empty.", Toast.LENGTH_SHORT).show();
     }
 
     private void showPostDataView() {

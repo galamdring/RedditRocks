@@ -1,13 +1,10 @@
-package com.galamdring.android.redditrocks.Data;
+package com.galamdring.android.redditrocks.data;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-
-import com.galamdring.android.redditrocks.MainActivity;
 
 /**
  * Created by LMCKECHNIE on 3/21/2018.

@@ -1,4 +1,4 @@
-package com.galamdring.android.redditrocks.Data;
+package com.galamdring.android.redditrocks.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,7 +27,7 @@ public class RedditPostDbHelper extends SQLiteOpenHelper {
      * use-case, we wanted to watch out for it and warn you what could happen if you mistakenly
      * version your databases.
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public RedditPostDbHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,7 +39,7 @@ public class RedditPostDbHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + PostContract.PostEntry.TABLE_NAME+" (" +
                         PostContract.PostEntry._ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         PostContract.PostEntry.COLUMN_COMMENTS_COUNT + " INTEGER NOT NULL, " +
-                        PostContract.PostEntry.COLUMN_LINK + "TEXT NOT NULL, "+
+                        PostContract.PostEntry.COLUMN_LINK + " TEXT NOT NULL, "+
                         PostContract.PostEntry.COLUMN_POST_TIME + " INTEGER NOT NULL, "+
                         PostContract.PostEntry.COLUMN_SCORE + " INTEGER NOT NULL, " +
                         PostContract.PostEntry.COLUMN_SUBREDDIT + " TEXT NOT NULL, " +
